@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Created by Leo: http://leoeditor.com/leo_toc.html -->
-<leo_file xmlns:leo="http://leoeditor.com/namespaces/leo-python-editor/1.1" >
+<!-- Created by Leo: https://leo-editor.github.io/leo-editor/leo_toc.html -->
+<leo_file xmlns:leo="https://leo-editor.github.io/leo-editor/namespaces/leo-python-editor/1.1" >
 <leo_header file_format="2"/>
 <globals/>
 <preferences/>
@@ -185,7 +185,8 @@
 <v t="caminhante.20200609201216.1"><vh>@string active_path_attype = edit</vh></v>
 </v>
 <v t="caminhante.20200609201323.1"><vh>Autosave</vh>
-<v t="user.20190923054424.1"><vh>@int mod_autosave_interval = 30</vh></v>
+<v t="user.20190923054424.1"><vh>@int mod_autosave_interval = 3</vh></v>
+<v t="caminhante.20251129201352.1"><vh>@bool mod_autosave_active = True</vh></v>
 </v>
 <v t="user.20190923051633.6"><vh>Basic Fonts (change these first)</vh>
 <v t="user.20190923051633.7"><vh>@string font-family = DejaVu Sans Mono</vh></v>
@@ -198,7 +199,7 @@
 <v t="user.20190923053658.1"><vh>Gutter</vh>
 <v t="user.20190923053658.2"><vh>@bool use-gutter = True</vh></v>
 <v t="user.20190923053658.3"><vh>@int gutter-w-adjust = 4</vh></v>
-<v t="user.20190923053658.4"><vh>@int gutter-y-adjust = 2</vh></v>
+<v t="user.20190923053658.4"><vh>@int gutter-y-adjust = 4</vh></v>
 </v>
 <v t="caminhante.20200609201313.1"><vh>Misc</vh>
 <v t="caminhante.20200527231223.1"><vh>@int page_width = 120</vh></v>
@@ -206,7 +207,14 @@
 <v t="caminhante.20210601095555.1"><vh>@string todo-time-name = pomodoros</vh></v>
 </v>
 <v t="caminhante.20200609201255.1"><vh>Node Actions</vh>
-<v t="user.20200427135518.1"><vh>@bool nodeActions_save_atFile_nodes = True</vh></v>
+<v t="caminhante.20251129202339.1"><vh>nodeActions</vh>
+<v t="caminhante.20251129203431.1"><vh>@rm /*/</vh></v>
+<v t="caminhante.20251129202900.1"><vh>@rm *</vh></v>
+<v t="caminhante.20251129203456.1"><vh>@mkdir *</vh></v>
+<v t="caminhante.20251129204106.1"><vh>@run *</vh></v>
+<v t="caminhante.20251129213245.1"><vh>@cmd *</vh></v>
+<v t="caminhante.20251129202344.1"><vh>@files *</vh></v>
+</v>
 </v>
 </v>
 </vnodes>
@@ -219,7 +227,56 @@
 <t tx="caminhante.20200609201313.1"></t>
 <t tx="caminhante.20200609201323.1"></t>
 <t tx="caminhante.20210601095555.1"></t>
-<t tx="ekr.20180307010409.1" lineYOffset="4b002e">@language rest
+<t tx="caminhante.20251129201352.1"></t>
+<t tx="caminhante.20251129202339.1"></t>
+<t tx="caminhante.20251129202344.1">head = c.p.h.split(" ",1)
+c.p.h = head[1]
+c.p.b = ""
+g.es(head[1]+" unloaded")
+c.p.deleteAllChildren()
+c.redraw_later()
+</t>
+<t tx="caminhante.20251129202900.1">import subprocess
+path = c.fullPath(c.p)
+head = c.p.h.split(" ",1)
+proc = subprocess.run(["rm", "-fv", path+'/'+head[1]], capture_output=True)
+c.p.b = proc.stdout
+c.p.deleteAllChildren()
+c.redraw_later()
+</t>
+<t tx="caminhante.20251129203431.1">import subprocess
+path = c.fullPath(c.p)
+proc = subprocess.run(["rm", "-fvr", path], capture_output=True)
+c.p.b = proc.stdout
+c.p.deleteAllChildren()
+c.redraw_later()
+</t>
+<t tx="caminhante.20251129203456.1">import subprocess
+path = c.fullPath(c.p)
+head = c.p.h.split(" ",1)
+proc = subprocess.run(["mkdir", "-p", path+'/'+head[1]])
+c.p.h = f"/{head[1]}/"
+c.p.b = f"@path {head[1]}"
+</t>
+<t tx="caminhante.20251129204106.1">import subprocess
+path = c.fullPath(c.p)
+proc = subprocess.run(["bash"], capture_output=True, cwd=path, text=True, input=c.p.b)
+child = c.p.insertAsFirstChild()
+child.h = c.p.h
+child.b = proc.stdout
+if len(proc.stderr) &gt; 0:
+    g.es(proc.stderr)
+c.redraw_later()
+</t>
+<t tx="caminhante.20251129213245.1">import subprocess
+path = c.fullPath(c.p)
+head = c.p.h.split(" ",1)
+proc = subprocess.run(["bash"], capture_output=True, cwd=path, text=True, input=head[1])
+c.p.b += proc.stdout
+if len(proc.stderr) &gt; 0:
+    g.es(proc.stderr)
+</t>
+<t tx="ekr.20180307010409.1">@language rest
 @wrap
 @tabwidth -2
 
@@ -253,9 +310,9 @@ Changes made by XCaminhante:
 url(/home/edward/leo.repo/leo-editor/leo/Icons/nodes-dark/triangles/closed.png)</t>
 <t tx="ekr.20180307010409.101">url(/home/edward/leo.repo/leo-editor/leo/Icons/nodes-dark/triangles/open.png)</t>
 <t tx="ekr.20180307010409.102"></t>
-<t tx="ekr.20180307010409.103" lineYOffset="4b002e">Set to true for dark themes, so bookmarks.py can generate
+<t tx="ekr.20180307010409.103">Set to true for dark themes, so bookmarks.py can generate
 random background colors which are appropriate etc.</t>
-<t tx="ekr.20180307010409.104" lineYOffset="4b002e">Name of the theme,
+<t tx="ekr.20180307010409.104">Name of the theme,
 used to find icon files</t>
 <t tx="ekr.20180307010409.105">/*
 @language css
@@ -505,7 +562,7 @@ QWidget {
 <t tx="ekr.20180307010409.14"></t>
 <t tx="ekr.20180307010409.15"># Not an official solarized color: same as solorarized-base3</t>
 <t tx="ekr.20180307010409.16"></t>
-<t tx="ekr.20180307010409.17" lineYOffset="4b002e">These settings must exist because they are *not* used in the css.</t>
+<t tx="ekr.20180307010409.17">These settings must exist because they are *not* used in the css.</t>
 <t tx="ekr.20180307010409.18">These @color names map directly to the constants defined in each .py file in the leo/modes folder.
 
 There is a script to generate these .py files directly from the jEdit .xml syntax coloring files.
@@ -514,7 +571,7 @@ These names can't be changed.  Leo's colorizing code leoColorizer.py uses these 
 
 Check the .py file in leo/modes for your langauge to see which names are actually used.</t>
 <t tx="ekr.20180307010409.19"></t>
-<t tx="ekr.20180307010409.2" lineYOffset="4b002e"></t>
+<t tx="ekr.20180307010409.2"></t>
 <t tx="ekr.20180307010409.20"></t>
 <t tx="ekr.20180307010409.21"></t>
 <t tx="ekr.20180307010409.22">was blue
@@ -770,7 +827,7 @@ For more information see http://leoeditor.com/customizing.html</t>
 # Highly-recommended plugins:
 
 plugins_menu.py
-free_layout.py
+#free_layout.py
     # Now loaded automatically.
     # But it's useful to have a free_layout menu in the Plugins menu.
 
@@ -780,17 +837,17 @@ contextmenu.py
     # This is required by the vim.py and xemacs.py plugins.
 leo_to_html.py
 # livecode.py
-mod_scripting.py
-nav_qt.py
-nodetags.py
+#mod_scripting.py
+#nav_qt.py
+#nodetags.py
 quicksearch.py
 # python_terminal.py
     # #1009: python_terminal can segfault.
-screen_capture.py
+#screen_capture.py
 settings_finder.py
-stickynotes.py
+#stickynotes.py
 todo.py
-viewrendered.py
+#viewrendered.py
 
 # Alphabetical list of all Leo plugins.
 
@@ -843,7 +900,7 @@ active_path.py
 # leoOPML.py
 # leoremote.py
 # leoscreen.py
-line_numbering.py
+# line_numbering.py
 # livecode.py
 # macros.py
 # markup_inline.py
@@ -946,10 +1003,6 @@ cycle-editor-focus = Ctrl-Tab
 </t>
 <t tx="user.20190923051633.6"># All other fonts are defined in terms of these basic fonts.
 # Changing the basic fonts are all that most users will want to do.
-None_family = Noto Mono
-None_weight = normal
-None_slant = roman
-None_size = 12.0
 </t>
 <t tx="user.20190923051633.7"></t>
 <t tx="user.20190923051633.8">**Important**: This should be set by each user.</t>
@@ -959,6 +1012,5 @@ None_size = 12.0
 <t tx="user.20190923053658.3">The amount of extra width to give the gutter, in pixels</t>
 <t tx="user.20190923053658.4">The y offset of the first line of the gutter, in pixels.</t>
 <t tx="user.20190923054424.1"></t>
-<t tx="user.20200427135518.1"></t>
 </tnodes>
 </leo_file>
